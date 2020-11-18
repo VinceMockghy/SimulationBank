@@ -19,13 +19,21 @@ public class Window {
     private String name;
     private ArrayList<Integer> serviceType;
     private int priority;
-    private ArrayBlockingQueue<Customer> serviceQueue = null;
+    private ArrayBlockingQueue<Customer> serviceQueue = new ArrayBlockingQueue<Customer>(10);
 
     public Window(int id,String name, ArrayList<Integer> serviceType, int priority) {
         this.id = id;
         this.name = name;
         this.serviceType = serviceType;
         this.priority = priority;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public ArrayBlockingQueue<Customer> getServiceQueue() {
