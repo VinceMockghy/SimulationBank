@@ -19,7 +19,7 @@ public class Window {
     private String name;
     private ArrayList<Integer> serviceType;
     private int priority;
-    private ArrayBlockingQueue<Customer> serviceQueue = new ArrayBlockingQueue<Customer>(10);
+//    private ArrayBlockingQueue<Customer> serviceQueue = new ArrayBlockingQueue<Customer>(10);
 
     public Window(int id,String name, ArrayList<Integer> serviceType, int priority) {
         this.id = id;
@@ -36,13 +36,13 @@ public class Window {
         this.id = id;
     }
 
-    public ArrayBlockingQueue<Customer> getServiceQueue() {
-        return serviceQueue;
-    }
-
-    public void setServiceQueue(ArrayBlockingQueue<Customer> serviceQueue) {
-        this.serviceQueue = serviceQueue;
-    }
+//    public ArrayBlockingQueue<Customer> getServiceQueue() {
+//        return serviceQueue;
+//    }
+//
+//    public void setServiceQueue(ArrayBlockingQueue<Customer> serviceQueue) {
+//        this.serviceQueue = serviceQueue;
+//    }
 
     public String getName() {
         return name;
