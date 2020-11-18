@@ -9,10 +9,10 @@ public class Customer {
     private int id;
     private Business business;
 
-    public Customer(int id, int priority){
+    public Customer(int id, int priority) {
         this.id = id;
         this.priority = priority;
-//        this.business = Business.
+        this.business = Business.getRandomBusiness();
     }
 
     public int getPriority() {
@@ -29,5 +29,13 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Business getBusiness() {
+        return business;
+    }
+
+    public int getServiceTime(){
+        return 0;
     }
 }

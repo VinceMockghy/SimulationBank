@@ -2,31 +2,46 @@ package construct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author ghy
  * @date 2020/11/18 下午4:29
  */
-public enum Window {
+public class Window {
+
     /**
      * A类窗口 业务类型1,2,3,4,5,6,7,8 服务对象所有人
-     */
-    A(new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8)),1),
-    /**
      * B类窗口 业务类型1,2,4,5,7 服务对象所有人
-     */
-    B(new ArrayList<Integer>(Arrays.asList(1,2,4,5,7)),1),
-    /**
      * V类窗口 业务类型1,2,3,4,5,6,7,8 服务对象VIP优先
      */
-    V(new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8)),0);
+    private int id;
+    private String name;
+    private ArrayList<Integer> serviceType;
+    private int priority;
+    private ArrayBlockingQueue<Customer> serviceQueue = null;
 
-    protected ArrayList<Integer> serviceType;
-    protected int priority;
-
-    private Window(ArrayList<Integer> serviceType, int priority){
+    public Window(int id,String name, ArrayList<Integer> serviceType, int priority) {
+        this.id = id;
+        this.name = name;
         this.serviceType = serviceType;
         this.priority = priority;
+    }
+
+    public ArrayBlockingQueue<Customer> getServiceQueue() {
+        return serviceQueue;
+    }
+
+    public void setServiceQueue(ArrayBlockingQueue<Customer> serviceQueue) {
+        this.serviceQueue = serviceQueue;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<Integer> getServiceType() {
@@ -45,3 +60,4 @@ public enum Window {
         this.priority = priority;
     }
 }
+

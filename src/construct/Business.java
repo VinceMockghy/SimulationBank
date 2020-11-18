@@ -74,10 +74,8 @@ public enum Business {
         this.highTimeProportion = highTimeProportion;
     }
 
-//    public static Business getRandomBusiness(){
-//        Random random = new Random();
-//
-//        int x = random.nextInt(Business.getEnumConstants().length);
-//        return Business[(int)(Math.random()*Business)]
-//    }
+    public static Business getRandomBusiness(){
+        int pick = new Random().nextInt(Business.values().length);
+        return Business.values()[pick];
+    }
 }
