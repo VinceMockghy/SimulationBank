@@ -41,7 +41,7 @@ public class Main {
 //        executorService.execute(new Test(customerQueue));
         executorService.execute(new CustomerComing(10, preCustomer, globalCustomQueue));
         for (int i = 0; i < 4; i++) {
-            executorService.execute(new WindowServing(windowsList.get(i),baseTime,globalCustomQueue));
+            executorService.execute(new WindowServing(windowsList.get(i), baseTime, globalCustomQueue));
         }
         executorService.shutdown();
 
@@ -54,7 +54,7 @@ class CustomerComing implements Runnable {
     private ArrayList<Customer> customerList;
     private ArrayList<Customer> globalCustomQueue;
 
-    public CustomerComing(int customerSize, ArrayList<Customer> customerList,ArrayList<Customer> globalCustomQueue) {
+    public CustomerComing(int customerSize, ArrayList<Customer> customerList, ArrayList<Customer> globalCustomQueue) {
         this.customerSize = customerSize;
         this.customerList = customerList;
         this.globalCustomQueue = globalCustomQueue;
@@ -65,10 +65,10 @@ class CustomerComing implements Runnable {
     public void run() {
         for (int i = 0; i < this.customerSize; i++) {
             try {
-                System.out.println("顾客"+customerList.get(i).getId()+"到达,取号等待");
+                System.out.println("顾客" + customerList.get(i).getId() + "到达,取号等待");
                 globalCustomQueue.add(customerList.get(i));
 //                Thread.yield();
-                Thread.sleep(new Random().nextInt(1000));
+                Thread.sleep(new Random().nextInt(2000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -77,51 +77,63 @@ class CustomerComing implements Runnable {
     }
 }
 
-class WindowServing implements Runnable{
+class WindowServing implements Runnable {
     private Window serveWindow;
     private double baseTime;
-    private ArrayList<Customer> globalCustomQueue;
+    private final ArrayList<Customer> globalCustomQueue;
 
-    WindowServing(Window serveWindow,double baseTime,ArrayList<Customer> globalCustomQueue){
+    WindowServing(Window serveWindow, double baseTime, ArrayList<Customer> globalCustomQueue) {
         this.serveWindow = serveWindow;
         this.baseTime = baseTime;
         this.globalCustomQueue = globalCustomQueue;
     }
 
-    public Customer getCustomerFromQueue(){
-        synchronized(WindowServing.class) {
-            Customer res = globalCustomQueue.get(0);
-            globalCustomQueue.remove(0);
-            return res;
+    public Customer getCustomerFromQueue() {
+        synchronized (globalCustomQueue) {
+            if(!readQueue()) {
+                Customer res = globalCustomQueue.get(0);
+                globalCustomQueue.remove(0);
+                return res;
+            }
+            else {
+                return null;
+            }
+        }
+    }
+
+    public Boolean readQueue() {
+        synchronized (globalCustomQueue) {
+            return globalCustomQueue.isEmpty();
         }
     }
 
     @Override
     public void run() {
-        System.out.println("窗口"+this.serveWindow.getName()+"窗口id"+this.serveWindow.getId()+"开启");
-        while (true){
-//            System.out.println(this.serveWindow.getName());
-            Thread.yield();
-            if(globalCustomQueue.isEmpty() ){
-                if(Main.flag==1){
+        System.out.println("窗口" + this.serveWindow.getName() + "窗口id" + this.serveWindow.getId() + "开启");
+        while (true) {
+            if (readQueue()) {
+                if (Main.flag == 1) {
                     break;
                 }
-            }else {
-//                System.out.println(this.serveWindow.getName());
+            } else {
                 Customer customer = getCustomerFromQueue();
+                if(customer == null){
+                    continue;
+                }
                 try {
 //                    assert customer != null;
-                    System.out.println("窗口"+this.serveWindow.getName()+" 窗口id"+this.serveWindow.getId()+" 服务顾客"+customer.getId());
+                    System.out.println("窗口" + this.serveWindow.getName() + " 窗口id" + this.serveWindow.getId() + " 服务顾客" + customer.getId());
                     double low = customer.getBusiness().getLowTimeProportion();
                     double high = customer.getBusiness().getHighTimeProportion();
-                    int serveTime = new Random().nextInt((int) (baseTime*(high-low)))+(int)(baseTime*low);
+                    int serveTime = new Random().nextInt((int) (baseTime * (high - low))) + (int) (baseTime * low);
                     Thread.sleep(serveTime);
-                    System.out.println("顾客"+customer.getId()+"在窗口"+this.serveWindow.getName()+"完成服务,"+"耗时:"+serveTime*1.0/1000+"秒");
+                    System.out.println("顾客" + customer.getId() + "在窗口" + this.serveWindow.getName() + "完成服务," + "耗时:" + serveTime * 1.0 / 1000 + "秒");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+            Thread.yield();
         }
-        System.out.println("窗口"+this.serveWindow.getName()+"窗口id"+this.serveWindow.getId()+"关闭");
+        System.out.println("窗口" + this.serveWindow.getName() + "窗口id" + this.serveWindow.getId() + "关闭");
     }
 }
