@@ -7,12 +7,22 @@ package construct;
 public class Customer {
     private int priority;
     private int id;
+    private String name;
     private Business business;
 
-    public Customer(int id, int priority) {
-        this.id = id;
+    public Customer(int id, String name,int priority) {
         this.priority = priority;
+        this.id = id;
+        this.name = name;
         this.business = Business.getRandomBusiness();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPriority() {
