@@ -1,3 +1,4 @@
+import construct.Business;
 import construct.Customer;
 import construct.Window;
 
@@ -16,12 +17,15 @@ public class Main {
     static ArrayList<Customer> globalCustomQueue = new ArrayList<Customer>();
     static ArrayList<Customer> preCustomer = new ArrayList<>();
     static ArrayList<Window> windowsList = new ArrayList<>();
-    static double baseTime = 1000;
+    static double baseTime = 5000;
     static int flag = -1;
 
     public static void makeCustomer() {
         for (int i = 0; i < 10; i++) {
             preCustomer.add(new Customer(i, 1));
+        }
+        for (int i = 10;i<12;i++){
+            preCustomer.add(new Customer(i, 0));
         }
         Collections.shuffle(preCustomer);
     }
@@ -65,7 +69,8 @@ class CustomerComing implements Runnable {
     public void run() {
         for (int i = 0; i < this.customerSize; i++) {
             try {
-                System.out.println("顾客" + customerList.get(i).getId() + "到达,取号等待");
+                System.out.println("顾客" + customerList.get(i).getId() + "到达,取号等待,需要办理的业务类型为："
+                        +customerList.get(i).getBusiness().getId());
                 globalCustomQueue.add(customerList.get(i));
 //                Thread.yield();
                 Thread.sleep(new Random().nextInt(2000));
@@ -90,15 +95,43 @@ class WindowServing implements Runnable {
 
     public Customer getCustomerFromQueue() {
         synchronized (globalCustomQueue) {
-            if(!readQueue()) {
-                Customer res = globalCustomQueue.get(0);
-                globalCustomQueue.remove(0);
-                return res;
-            }
-            else {
+            if (!readQueue()) {
+                if ("A".equals(this.serveWindow.getName())) {
+                    Customer res = globalCustomQueue.get(0);
+                    globalCustomQueue.remove(0);
+                    return res;
+                } else if ("B".equals(this.serveWindow.getName())) {
+                    for (int i = 0; i < globalCustomQueue.size(); i++) {
+                        Business customer = globalCustomQueue.get(i).getBusiness();
+                        if (customer == Business.PAY_FINE || customer == Business.PURCHASE_FUND
+                                || customer == Business.INDIVIDUAL_LOAN_REPAYMENT) {
+                            continue;
+                        }
+                        else{
+                            Customer res = globalCustomQueue.get(i);
+                            globalCustomQueue.remove(i);
+                            return res;
+                        }
+                    }
+                    return null;
+                }
+                else if("V".equals(this.serveWindow.getName())){
+                    for (int i = 0; i < globalCustomQueue.size(); i++) {
+                        if(globalCustomQueue.get(i).getPriority()==0){
+                            Customer res = globalCustomQueue.get(i);
+                            globalCustomQueue.remove(i);
+                            return res;
+                        }
+                    }
+                    Customer res = globalCustomQueue.get(0);
+                    globalCustomQueue.remove(0);
+                    return res;
+                }
+            } else {
                 return null;
             }
         }
+        return null;
     }
 
     public Boolean readQueue() {
@@ -117,7 +150,7 @@ class WindowServing implements Runnable {
                 }
             } else {
                 Customer customer = getCustomerFromQueue();
-                if(customer == null){
+                if (customer == null) {
                     continue;
                 }
                 try {
