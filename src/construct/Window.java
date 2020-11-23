@@ -1,8 +1,6 @@
 package construct;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author ghy
