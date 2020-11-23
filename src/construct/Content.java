@@ -6,15 +6,19 @@ package construct;
  */
 public class Content {
     private String customerName;
+    private int priority;
     private long arriveTime;
     private Business businessType;
     private long useTime;
+    private Window serveWindow;
 
-    public Content(String customerName, long arriveTime, Business businessType, long useTime) {
+    public Content(String customerName, int priority, long arriveTime, Business businessType, long useTime, Window serveWindow) {
         this.customerName = customerName;
+        this.priority = priority;
         this.arriveTime = arriveTime;
         this.businessType = businessType;
         this.useTime = useTime;
+        this.serveWindow = serveWindow;
     }
 
     public String getCustomerName() {
@@ -47,6 +51,22 @@ public class Content {
 
     public void setUseTime(long useTime) {
         this.useTime = useTime;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public Window getServeWindow() {
+        return serveWindow;
+    }
+
+    public void setServeWindow(Window serveWindow) {
+        this.serveWindow = serveWindow;
     }
 
     @Override

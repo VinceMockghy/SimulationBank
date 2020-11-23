@@ -10,44 +10,46 @@ public enum Business {
     /**
      * 存款
      */
-    DEPOSIT(1,0.5,1.5),
+    DEPOSIT(1,0.5,1.5,"存款"),
     /**
      * 取款
      */
-    WITH_DRAWAL(2,0.5,1.5),
+    WITH_DRAWAL(2,0.5,1.5,"取款"),
     /**
      * 缴纳罚款
      */
-    PAY_FINE(3,1.2,2),
+    PAY_FINE(3,1.2,2,"缴纳罚款"),
     /**
      * 开通网银
      */
-    OPEN_ONLINE_BANKING(4,5,8),
+    OPEN_ONLINE_BANKING(4,5,8,"开通网银"),
     /**
      * 交水电费
      */
-    PAY_WATER_AND_ELECTRICITY_BILLS(5,1.5,2),
+    PAY_WATER_AND_ELECTRICITY_BILLS(5,1.5,2,"交水电费"),
     /**
      * 购买基金
      */
-    PURCHASE_FUND(6,2,3),
+    PURCHASE_FUND(6,2,3,"购买基金"),
     /**
      * 转账汇款
      */
-    TRANSFER_REMITTANCE(7,3,4),
+    TRANSFER_REMITTANCE(7,3,4,"转账汇款"),
     /**
      * 个贷还款
      */
-    INDIVIDUAL_LOAN_REPAYMENT(8,2,4);
+    INDIVIDUAL_LOAN_REPAYMENT(8,2,4,"个贷还款");
 
     protected int id;
     protected double lowTimeProportion;
     protected double highTimeProportion;
+    protected String name;
 
-    private Business(int id, double lowTimeProportion, double highTimeProportion){
+    private Business(int id, double lowTimeProportion, double highTimeProportion,String name){
         this.id = id;
         this.lowTimeProportion=lowTimeProportion;
         this.highTimeProportion = highTimeProportion;
+        this.name = name;
     }
 
     public int getId() {
@@ -72,6 +74,14 @@ public enum Business {
 
     public void setHighTimeProportion(double highTimeProportion) {
         this.highTimeProportion = highTimeProportion;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public static Business getRandomBusiness(){
