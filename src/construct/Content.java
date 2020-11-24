@@ -8,14 +8,18 @@ public class Content {
     private String customerName;
     private int priority;
     private long arriveTime;
+    private long finishTime;
+    private long waitTime;
     private Business businessType;
     private long useTime;
     private Window serveWindow;
 
-    public Content(String customerName, int priority, long arriveTime, Business businessType, long useTime, Window serveWindow) {
+    public Content(String customerName, int priority, long arriveTime,long finishTime,long waitTime, Business businessType, long useTime, Window serveWindow) {
         this.customerName = customerName;
         this.priority = priority;
         this.arriveTime = arriveTime;
+        this.finishTime = finishTime;
+        this.waitTime = waitTime;
         this.businessType = businessType;
         this.useTime = useTime;
         this.serveWindow = serveWindow;
@@ -69,13 +73,20 @@ public class Content {
         this.serveWindow = serveWindow;
     }
 
-    @Override
-    public String toString() {
-        return "Content{" +
-                "customerName='" + customerName + '\'' +
-                ", arriveTime=" + arriveTime +
-                ", businessType=" + businessType +
-                ", useTime=" + useTime +
-                '}';
+    public long getFinishTime() {
+        return finishTime;
     }
+
+    public void setFinishTime(long finishTime) {
+        this.finishTime = finishTime;
+    }
+
+    public long getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(long waitTime) {
+        this.waitTime = waitTime;
+    }
+
 }

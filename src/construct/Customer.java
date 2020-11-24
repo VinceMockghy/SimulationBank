@@ -11,6 +11,8 @@ public class Customer {
     private String name;
     private Business business;
     private long arriveTime;
+    private long finishTime;
+    private long waitTime;
 
     public Customer(int id, String name,int priority) {
         this.priority = priority;
@@ -47,15 +49,27 @@ public class Customer {
         return business;
     }
 
-    public int getServiceTime(){
-        return 0;
-    }
-
     public long getArriveTime() {
         return arriveTime;
     }
 
     public void setArriveTime(long arriveTime) {
         this.arriveTime = arriveTime;
+    }
+
+    public long getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(long finishTime) {
+        this.finishTime = finishTime;
+    }
+
+    public long getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(long waitTime) {
+        this.waitTime = waitTime;
     }
 }

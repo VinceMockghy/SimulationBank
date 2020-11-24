@@ -1,9 +1,6 @@
 package thread;
 
-import construct.Business;
-import construct.Content;
-import construct.Customer;
-import construct.Window;
+import construct.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -29,6 +26,7 @@ public class Bank {
     static long openTime;
     static long closeTime;
     static long needWorkTime = 540;
+    static TimeChange timeChange;
 
     public Bank(double baseTime) {
         Bank.baseTime = baseTime;
@@ -39,10 +37,10 @@ public class Bank {
     }
 
     public void makeCustomer() {
-        for (int i = 0; i < 450; i++) {
+        for (int i = 0; i < 180; i++) {
             preCustomer.add(new Customer(i, "顾客" + i, 0));
         }
-        for (int i = 450; i < 500; i++) {
+        for (int i = 180; i < 200; i++) {
             preCustomer.add(new Customer(i, "顾客" + i, 1));
         }
         Collections.shuffle(preCustomer);
@@ -70,7 +68,9 @@ public class Bank {
 
     public void bankOpen() {
         System.out.println("银行开门");
+        System.out.println("working.....");
         openTime = System.currentTimeMillis();
+        timeChange = new TimeChange(openTime);
         this.makeCustomer();
         this.makeWindow();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -81,19 +81,23 @@ public class Bank {
         executorService.shutdown();
         while (true) {
             if (executorService.isTerminated()) {
-                System.out.println("银行关门啦");
+                System.out.println("银行关门啦，汇报进度");
                 System.out.println("一天的顾客日志如下");
                 System.out.println("一共服务了：" + contents.size() + "名顾客");
-                System.out.printf("%-12s %-15s %-15s %-15s %-15s %-15s\n", "客户名称", "是否为vip", "客户到达时间", "客户办理业务类型", "客户所需时间", "服务窗口");
+                System.out.printf("%-8s %-10s %-15s %-12s %-15s %-12s %-15s %-10s\n",
+                        "客户名称", "是否为vip", "客户到达时间", "客户办理业务类型", "客户所需时间(分钟)", "服务窗口","顾客完成时间","顾客等待时间");
                 for (Content c : contents) {
-                    System.out.printf("%-15s %-12s %-25s %-18s %-18s %-18s\n",
-                            c.getCustomerName(), c.getPriority(), sdf.format(new Date(c.getArriveTime())),
-                            c.getBusinessType().getName(), c.getUseTime(), c.getServeWindow().getName() + c.getServeWindow().getId());
+                    System.out.printf("%-10s %-9s %-22s %-17s %-18s %-12s %-22s %-10s\n",
+                            c.getCustomerName(), c.getPriority(), timeChange.timeMap(c.getArriveTime()),
+                            c.getBusinessType().getName(), c.getUseTime(),
+                            c.getServeWindow().getName() + c.getServeWindow().getId(),
+                            timeChange.timeMap(c.getFinishTime()),c.getWaitTime());
                 }
                 outputRateOfBusiness();
                 break;
             }
         }
+        System.out.println("汇报完毕，正式关门");
     }
 
     static class CustomerComing implements Runnable {
@@ -119,8 +123,8 @@ public class Bank {
                         }
                         break;
                     }
-                    System.out.println(customerList.get(i).getName() + "到达,取号等待,需要办理的业务类型为："
-                            + customerList.get(i).getBusiness().getId());
+//                    System.out.println(customerList.get(i).getName() + "到达,取号等待,需要办理的业务类型为："
+//                            + customerList.get(i).getBusiness().getId());
                     customerList.get(i).setArriveTime(System.currentTimeMillis());
                     synchronized (globalCustomQueue) {
                         globalCustomQueue.add(customerList.get(i));
@@ -217,14 +221,16 @@ public class Bank {
                         continue;
                     }
                     try {
-                        System.out.println("窗口" + this.serveWindow.getName() + " 窗口id" + this.serveWindow.getId() +
-                                " 服务顾客" + customer.getId());
+//                        System.out.println("窗口" + this.serveWindow.getName() + " 窗口id" + this.serveWindow.getId() +
+//                                " 服务顾客" + customer.getId());
                         double low = customer.getBusiness().getLowTimeProportion();
                         double high = customer.getBusiness().getHighTimeProportion();
                         int serveTime = new Random().nextInt((int) (baseTime * (high - low))) + (int) (baseTime * low);
                         Thread.sleep(serveTime);
+                        customer.setFinishTime(System.currentTimeMillis());
+                        customer.setWaitTime(customer.getFinishTime()-customer.getArriveTime()-serveTime);
                         synchronized (Bank.contents) {
-                            Bank.contents.add(new Content(customer.getName(), customer.getPriority(), customer.getArriveTime(), customer.getBusiness(), serveTime, this.serveWindow));
+                            Bank.contents.add(new Content(customer.getName(), customer.getPriority(), customer.getArriveTime(),customer.getFinishTime(),customer.getWaitTime(), customer.getBusiness(), serveTime, this.serveWindow));
                             if (Bank.businessCountMap.get(customer.getBusiness()) == null) {
                                 Bank.businessCountMap.put(customer.getBusiness(), 1);
                             } else {
@@ -232,7 +238,7 @@ public class Bank {
                                 Bank.businessCountMap.put(customer.getBusiness(), cnt + 1);
                             }
                         }
-                        System.out.println(customer.getName() + "在窗口" + this.serveWindow.getName() + "完成服务," + "耗时:" + serveTime * 1.0 / 1000 + "秒");
+//                        System.out.println(customer.getName() + "在窗口" + this.serveWindow.getName() + "完成服务," + "耗时:" + serveTime * 1.0 / 1000 + "秒");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
