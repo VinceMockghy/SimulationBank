@@ -1,5 +1,6 @@
 package construct;
 
+
 /**
  * @author ghy
  * @date 2020/11/18 下午4:39
@@ -9,6 +10,7 @@ public class Customer {
     private int id;
     private String name;
     private Business business;
+    private long arriveTime;
 
     public Customer(int id, String name,int priority) {
         this.priority = priority;
@@ -47,5 +49,13 @@ public class Customer {
 
     public int getServiceTime(){
         return 0;
+    }
+
+    public long getArriveTime() {
+        return arriveTime;
+    }
+
+    public void setArriveTime(long arriveTime) {
+        this.arriveTime = arriveTime;
     }
 }

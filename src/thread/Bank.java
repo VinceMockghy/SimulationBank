@@ -5,6 +5,7 @@ import construct.Content;
 import construct.Customer;
 import construct.Window;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,13 +15,20 @@ import java.util.concurrent.Executors;
  * @date 2020/11/23 上午11:07
  */
 public class Bank {
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     static ArrayList<Customer> globalCustomQueue = new ArrayList<Customer>();
     static ArrayList<Customer> preCustomer = new ArrayList<>();
     static ArrayList<Window> windowsList = new ArrayList<>();
-    static double baseTime = 1000;
+    /**
+     * baseTime会映射为真实的5分钟，也就是1ms对应1分钟
+     */
+    static double baseTime = 5;
     static int flag = -1;
-    static final ArrayList<Content> contents = new ArrayList<>();
+    static ArrayList<Content> contents = new ArrayList<>();
     static HashMap<Business, Integer> businessCountMap = new HashMap<>();
+    static long openTime;
+    static long closeTime;
+    static long needWorkTime = 540;
 
     public Bank(double baseTime) {
         Bank.baseTime = baseTime;
@@ -31,10 +39,10 @@ public class Bank {
     }
 
     public void makeCustomer() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 450; i++) {
             preCustomer.add(new Customer(i, "顾客" + i, 0));
         }
-        for (int i = 10; i < 12; i++) {
+        for (int i = 450; i < 500; i++) {
             preCustomer.add(new Customer(i, "顾客" + i, 1));
         }
         Collections.shuffle(preCustomer);
@@ -49,34 +57,24 @@ public class Bank {
 
     public void outputRateOfBusiness() {
         System.out.println("不同业务在所有办理业务中所占的比例为：");
-//        HashMap<Business, Double> rateMap = new HashMap<>();
-        int count = 0;;
         for (Business b : Business.values()) {
             try {
-                double rate = Bank.businessCountMap.get(b) * 1.0 / Bank.preCustomer.size();
-                System.out.printf("%s:%.3f%% ",b.getName(),rate);
+                double rate = Bank.businessCountMap.get(b) * 1.0 / Bank.contents.size() * 100;
+                System.out.printf("%s:%.3f%%\n", b.getName(), rate);
+            } catch (NullPointerException e) {
+                System.out.printf("%s:%.3f%%\n", b.getName(), 0.0);
             }
-            catch (NullPointerException e){
-                System.out.printf("%s:%.3f%% ",b.getName(),0.0);
-            }
-            finally {
-                count++;
-                if(count==4){
-                    count=0;
-                    System.out.println();
-                }
-            }
-//            rateMap.put(b,Bank.businessCountMap.get(b)*1.0/Bank.preCustomer.size());
         }
 
     }
 
     public void bankOpen() {
         System.out.println("银行开门");
+        openTime = System.currentTimeMillis();
         this.makeCustomer();
         this.makeWindow();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        executorService.execute(new CustomerComing(this.preCustomer.size(), preCustomer, globalCustomQueue));
+        executorService.execute(new CustomerComing(preCustomer.size(), preCustomer, globalCustomQueue));
         for (int i = 0; i < 4; i++) {
             executorService.execute(new WindowServing(windowsList.get(i), baseTime, globalCustomQueue));
         }
@@ -85,11 +83,12 @@ public class Bank {
             if (executorService.isTerminated()) {
                 System.out.println("银行关门啦");
                 System.out.println("一天的顾客日志如下");
-                System.out.printf("%-15s %-15s %-15s %-15s %-15s %-15s\n", "客户名称", "是否为vip", "客户到达时间", "客户办理业务类型", "客户所需时间", "服务窗口");
+                System.out.println("一共服务了：" + contents.size() + "名顾客");
+                System.out.printf("%-12s %-15s %-15s %-15s %-15s %-15s\n", "客户名称", "是否为vip", "客户到达时间", "客户办理业务类型", "客户所需时间", "服务窗口");
                 for (Content c : contents) {
-                    System.out.printf("%-18s %-18s %-18s %-18s %-18s %-18s\n",
-                            c.getCustomerName(), c.getPriority(), c.getArriveTime(),
-                            c.getBusinessType().getName(), c.getUseTime(), c.getServeWindow().getName()+c.getServeWindow().getId());
+                    System.out.printf("%-15s %-12s %-25s %-18s %-18s %-18s\n",
+                            c.getCustomerName(), c.getPriority(), sdf.format(new Date(c.getArriveTime())),
+                            c.getBusinessType().getName(), c.getUseTime(), c.getServeWindow().getName() + c.getServeWindow().getId());
                 }
                 outputRateOfBusiness();
                 break;
@@ -113,12 +112,20 @@ public class Bank {
         public void run() {
             for (int i = 0; i < this.customerSize; i++) {
                 try {
+                    closeTime = System.currentTimeMillis();
+                    if (closeTime - openTime >= needWorkTime) {
+                        synchronized (globalCustomQueue){
+                            System.out.println("排队的还有"+globalCustomQueue.size()+"位客人");
+                        }
+                        break;
+                    }
                     System.out.println(customerList.get(i).getName() + "到达,取号等待,需要办理的业务类型为："
                             + customerList.get(i).getBusiness().getId());
+                    customerList.get(i).setArriveTime(System.currentTimeMillis());
                     synchronized (globalCustomQueue) {
                         globalCustomQueue.add(customerList.get(i));
                     }
-                    Thread.sleep(new Random().nextInt((int) Bank.baseTime));
+                    Thread.sleep(new Random().nextInt((int) Bank.baseTime * 2));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -217,7 +224,7 @@ public class Bank {
                         int serveTime = new Random().nextInt((int) (baseTime * (high - low))) + (int) (baseTime * low);
                         Thread.sleep(serveTime);
                         synchronized (Bank.contents) {
-                            Bank.contents.add(new Content(customer.getName(), customer.getPriority(), 0, customer.getBusiness(), serveTime, this.serveWindow));
+                            Bank.contents.add(new Content(customer.getName(), customer.getPriority(), customer.getArriveTime(), customer.getBusiness(), serveTime, this.serveWindow));
                             if (Bank.businessCountMap.get(customer.getBusiness()) == null) {
                                 Bank.businessCountMap.put(customer.getBusiness(), 1);
                             } else {
