@@ -20,6 +20,8 @@ public class Bank {
      * baseTime会映射为真实的5分钟，也就是1ms对应1分钟
      */
     static double baseTime = 5;
+    static double vipRate = 0.1;
+    static double totalCustom = 150;
     static int flag = -1;
     static ArrayList<Content> contents = new ArrayList<>();
     static HashMap<Business, Integer> businessCountMap = new HashMap<>();
@@ -27,6 +29,7 @@ public class Bank {
     static long closeTime;
     static long needWorkTime = 540;
     static TimeChange timeChange;
+    static RateRandom rateRandom;
 
     public Bank(double baseTime) {
         Bank.baseTime = baseTime;
@@ -37,11 +40,11 @@ public class Bank {
     }
 
     public void makeCustomer() {
-        for (int i = 0; i < 180; i++) {
-            preCustomer.add(new Customer(i, "顾客" + i, 0));
+        for (int i = 0; i < (int)(totalCustom*(1-vipRate)); i++) {
+            preCustomer.add(new Customer(i, "顾客" + i, 0,rateRandom.getRandomBusiness()));
         }
-        for (int i = 180; i < 200; i++) {
-            preCustomer.add(new Customer(i, "顾客" + i, 1));
+        for (int i = (int)(totalCustom*(1-vipRate)); i < totalCustom; i++) {
+            preCustomer.add(new Customer(i, "顾客" + i, 1,rateRandom.getRandomBusiness()));
         }
         Collections.shuffle(preCustomer);
     }
@@ -68,6 +71,12 @@ public class Bank {
 
     public void bankOpen() {
         System.out.println("银行开门");
+        // 正常日
+//        rateRandom = new RateRandom();
+        // 基准日A
+//        rateRandom = new RateRandom(0.2,0.2,0.1,0.1,0.05,0.15,0.10,0.10);
+        // 营业日B
+        rateRandom = new RateRandom(0.1,0.1,0.05,0.05,0.05,0.40,0.05,0.20);
         System.out.println("working.....");
         openTime = System.currentTimeMillis();
         timeChange = new TimeChange(openTime);

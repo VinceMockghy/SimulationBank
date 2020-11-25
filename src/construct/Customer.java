@@ -14,11 +14,12 @@ public class Customer {
     private long finishTime;
     private long waitTime;
 
-    public Customer(int id, String name,int priority) {
+    public Customer(int id, String name,int priority,Business business) {
         this.priority = priority;
         this.id = id;
         this.name = name;
-        this.business = Business.getRandomBusiness();
+        this.business = business;
+//        this.business = Business.getRandomBusiness();
     }
 
     public String getName() {
