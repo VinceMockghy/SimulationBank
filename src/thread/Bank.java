@@ -56,6 +56,14 @@ public class Bank {
         windowsList.add(new Window(3, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7)), 1));
     }
 
+    public void outputCustomAvgServeTime(){
+        long sum=0;
+        for (Content content : contents) {
+            sum = sum + (content.getFinishTime() - content.getArriveTime());
+        }
+        System.out.printf("平均办理时间：%.2fmin\n",sum*1.0/contents.size());
+    }
+
     public void outputRateOfBusiness() {
         System.out.println("不同业务在所有办理业务中所占的比例为：");
         for (Business b : Business.values()) {
@@ -102,6 +110,7 @@ public class Bank {
                             c.getServeWindow().getName() + c.getServeWindow().getId(),
                             timeChange.timeMap(c.getFinishTime()),c.getWaitTime());
                 }
+                outputCustomAvgServeTime();
                 outputRateOfBusiness();
                 break;
             }
@@ -230,8 +239,6 @@ public class Bank {
                         continue;
                     }
                     try {
-//                        System.out.println("窗口" + this.serveWindow.getName() + " 窗口id" + this.serveWindow.getId() +
-//                                " 服务顾客" + customer.getId());
                         double low = customer.getBusiness().getLowTimeProportion();
                         double high = customer.getBusiness().getHighTimeProportion();
                         int serveTime = new Random().nextInt((int) (baseTime * (high - low))) + (int) (baseTime * low);
@@ -247,7 +254,6 @@ public class Bank {
                                 Bank.businessCountMap.put(customer.getBusiness(), cnt + 1);
                             }
                         }
-//                        System.out.println(customer.getName() + "在窗口" + this.serveWindow.getName() + "完成服务," + "耗时:" + serveTime * 1.0 / 1000 + "秒");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -50,8 +50,5 @@ public class RateRandom {
         else {
             return Business.INDIVIDUAL_LOAN_REPAYMENT;
         }
-//        else if(randomNumber>rate1+rate2+rate3+rate4+rate5+rate6+rate7 && randomNumber<=rate1+rate2+rate3+rate4+rate5+rate6+rate7+rate8){
-//            return Business.INDIVIDUAL_LOAN_REPAYMENT;
-//        }
     }
 }
