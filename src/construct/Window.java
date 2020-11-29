@@ -15,13 +15,11 @@ public class Window {
     private int id;
     private String name;
     private ArrayList<Integer> serviceType;
-    private int priority;
 
-    public Window(int id,String name, ArrayList<Integer> serviceType, int priority) {
+    public Window(int id,String name, ArrayList<Integer> serviceType) {
         this.id = id;
         this.name = name;
         this.serviceType = serviceType;
-        this.priority = priority;
     }
 
     public int getId() {
@@ -48,12 +46,5 @@ public class Window {
         this.serviceType = serviceType;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
 }
 

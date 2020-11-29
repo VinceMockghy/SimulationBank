@@ -56,10 +56,10 @@ public class Bank {
      * 创建银行窗口，创建四个窗口 V A B B
      */
     public void makeWindow() {
-        windowsList.add(new Window(0, "V", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8)), 0));
-        windowsList.add(new Window(1, "A", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8)), 1));
-        windowsList.add(new Window(2, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7)), 1));
-        windowsList.add(new Window(3, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7)), 1));
+        windowsList.add(new Window(0, "V", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8))));
+        windowsList.add(new Window(1, "A", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8))));
+        windowsList.add(new Window(2, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7))));
+        windowsList.add(new Window(3, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7))));
     }
 
     /**
@@ -87,7 +87,6 @@ public class Bank {
                 System.out.printf("%s:%.3f%%\n", b.getName(), 0.0);
             }
         }
-
     }
 
     /**
@@ -148,8 +147,6 @@ public class Bank {
             this.customerList = customerList;
             this.globalCustomQueue = globalCustomQueue;
         }
-
-
         @Override
         public void run() {
             for (int i = 0; i < this.customerSize; i++) {
