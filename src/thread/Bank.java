@@ -158,6 +158,8 @@ public class Bank {
                         }
                         break;
                     }
+                    System.out.println(customerList.get(i).getName() + "到达,取号等待,需要办理的业务类型为："
+                            + customerList.get(i).getBusiness().getId());
                     customerList.get(i).setArriveTime(System.currentTimeMillis());
                     synchronized (globalCustomQueue) {
                         globalCustomQueue.add(customerList.get(i));
@@ -259,6 +261,8 @@ public class Bank {
                         continue;
                     }
                     try {
+                        System.out.println("窗口"+this.serveWindow.getName()+"窗口id"+this.serveWindow.getId()+
+                                " 服务顾客"+customer.getName());
                         double low = customer.getBusiness().getLowTimeProportion();
                         double high = customer.getBusiness().getHighTimeProportion();
                         int serveTime = new Random().nextInt((int) (baseTime * (high - low))) + (int) (baseTime * low);
@@ -274,6 +278,7 @@ public class Bank {
                                 Bank.businessCountMap.put(customer.getBusiness(), cnt + 1);
                             }
                         }
+                        System.out.println(customer.getName()+"在窗口"+this.serveWindow.getName()+"完成服务,"+"耗时:"+serveTime*1.0/1000+"秒");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
