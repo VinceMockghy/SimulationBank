@@ -3,6 +3,7 @@ package construct;
 import java.util.Random;
 
 /**
+ * 枚举类，各种银行的业务类型，包含id，最小基本时间倍率，最大基本时间倍率，类型名称
  * @author ghy
  * @date 2020/11/17 下午4:43
  */

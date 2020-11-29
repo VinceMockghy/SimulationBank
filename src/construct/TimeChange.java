@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 时间映射类，这个类会将当前的时间戳映射到当天早上8点到晚上五点
  * @author ghy
  * @date 2020/11/24 下午7:09
  */
@@ -19,8 +20,6 @@ public class TimeChange {
         calendar.set(Calendar.HOUR_OF_DAY, 8);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        System.out.println(sdf.format(calendar.getTime()));
-
     }
 
     public long getOpenTime() {

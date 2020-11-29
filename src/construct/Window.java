@@ -3,16 +3,15 @@ package construct;
 import java.util.ArrayList;
 
 /**
+ * 窗口类
+ * A类窗口 业务类型1,2,3,4,5,6,7,8 服务对象所有人
+ * B类窗口 业务类型1,2,4,5,7 服务对象所有人
+ * V类窗口 业务类型1,2,3,4,5,6,7,8 服务对象VIP优先
  * @author ghy
  * @date 2020/11/18 下午4:29
  */
 public class Window {
 
-    /**
-     * A类窗口 业务类型1,2,3,4,5,6,7,8 服务对象所有人
-     * B类窗口 业务类型1,2,4,5,7 服务对象所有人
-     * V类窗口 业务类型1,2,3,4,5,6,7,8 服务对象VIP优先
-     */
     private int id;
     private String name;
     private ArrayList<Integer> serviceType;

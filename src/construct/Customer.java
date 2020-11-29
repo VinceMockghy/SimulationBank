@@ -2,6 +2,7 @@ package construct;
 
 
 /**
+ * 顾客类包含是否为Vip，id，名字，办理的业务类型，到达时间，结束时间，等待时间
  * @author ghy
  * @date 2020/11/18 下午4:39
  */
@@ -19,7 +20,6 @@ public class Customer {
         this.id = id;
         this.name = name;
         this.business = business;
-//        this.business = Business.getRandomBusiness();
     }
 
     public String getName() {

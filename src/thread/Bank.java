@@ -39,6 +39,9 @@ public class Bank {
 
     }
 
+    /**
+     * 按照比例创建所有的一般用户以及Vip用户，添加到预先数组preCustomer中，最后用shuffle进行顺序打乱
+     */
     public void makeCustomer() {
         for (int i = 0; i < (int)(totalCustom*(1-vipRate)); i++) {
             preCustomer.add(new Customer(i, "顾客" + i, 0,rateRandom.getRandomBusiness()));
@@ -49,6 +52,9 @@ public class Bank {
         Collections.shuffle(preCustomer);
     }
 
+    /**
+     * 创建银行窗口，创建四个窗口 V A B B
+     */
     public void makeWindow() {
         windowsList.add(new Window(0, "V", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8)), 0));
         windowsList.add(new Window(1, "A", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8)), 1));
@@ -56,6 +62,10 @@ public class Bank {
         windowsList.add(new Window(3, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7)), 1));
     }
 
+    /**
+     * 输出客户的平均办理时间
+     * 从日志中把所有顾客的完成时间减去到达时间，最后除以日志数量即可
+     */
     public void outputCustomAvgServeTime(){
         long sum=0;
         for (Content content : contents) {
@@ -64,6 +74,9 @@ public class Bank {
         System.out.printf("平均办理时间：%.2fmin\n",sum*1.0/contents.size());
     }
 
+    /**
+     * 输出办理每个业务的比例
+     */
     public void outputRateOfBusiness() {
         System.out.println("不同业务在所有办理业务中所占的比例为：");
         for (Business b : Business.values()) {
@@ -77,6 +90,9 @@ public class Bank {
 
     }
 
+    /**
+     * 银行开门
+     */
     public void bankOpen() {
         System.out.println("银行开门");
         // 正常日
@@ -118,6 +134,10 @@ public class Bank {
         System.out.println("汇报完毕，正式关门");
     }
 
+    /**
+     * 顾客到来线程类
+     * run 方法中在随机等待两倍的基准时间后从preCustomer列表中获取一个客户后放置到银行等待队列中
+     */
     static class CustomerComing implements Runnable {
         private int customerSize;
         private ArrayList<Customer> customerList;
@@ -141,8 +161,6 @@ public class Bank {
                         }
                         break;
                     }
-//                    System.out.println(customerList.get(i).getName() + "到达,取号等待,需要办理的业务类型为："
-//                            + customerList.get(i).getBusiness().getId());
                     customerList.get(i).setArriveTime(System.currentTimeMillis());
                     synchronized (globalCustomQueue) {
                         globalCustomQueue.add(customerList.get(i));
@@ -156,6 +174,10 @@ public class Bank {
         }
     }
 
+    /**
+     * 窗口服务线程类
+     * run 方法中四个窗口不断的从银行的等待队列中获取顾客，使用同步锁做到线程之间的控制
+     */
     static class WindowServing implements Runnable {
         private final Window serveWindow;
         private final double baseTime;
@@ -168,6 +190,7 @@ public class Bank {
         }
 
         /**
+         * 从银行的顾客等待队列获取一名顾客进行服务
          * 如果银行的窗口名称为A类窗口，就直接从顾客等待队列里拿第一个数据并移除
          * 如果银行的窗口名称为B类窗口，遍历每一个等待队列中的顾客，如果某个顾客办理的业务B窗口无法执行就跳过这个顾客
          * 如果银行的窗口名称为V类窗口，遍历每一个等待队列中的顾客，如果顾客是VIP(priority = 0)，就优先返回这个顾客并移除队列，如果没有直接取第一个

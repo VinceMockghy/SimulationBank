@@ -1,6 +1,7 @@
 package construct;
 
 /**
+ * 随机函数类，可以让业务类型出现的概率受我们控制
  * @author ghy
  * @date 2020/11/25 下午4:09
  */
