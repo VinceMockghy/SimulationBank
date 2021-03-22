@@ -58,6 +58,7 @@ public class Bank {
     public void makeWindow() {
         windowsList.add(new Window(0, "V", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8))));
         windowsList.add(new Window(1, "A", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8))));
+//        windowsList.add(new Window(2, "A", new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8))));
         windowsList.add(new Window(2, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7))));
         windowsList.add(new Window(3, "B", new ArrayList<Integer>(Arrays.asList(1, 2, 4, 5, 7))));
     }
@@ -95,11 +96,11 @@ public class Bank {
     public void bankOpen() {
         System.out.println("银行开门");
         // 正常日
-//        rateRandom = new RateRandom();
+        rateRandom = new RateRandom();
         // 基准日A
 //        rateRandom = new RateRandom(0.2,0.2,0.1,0.1,0.05,0.15,0.10,0.10);
         // 营业日B
-        rateRandom = new RateRandom(0.1,0.1,0.05,0.05,0.05,0.40,0.05,0.20);
+//        rateRandom = new RateRandom(0.1,0.1,0.05,0.05,0.05,0.40,0.05,0.20);
         System.out.println("working.....");
         openTime = System.currentTimeMillis();
         timeChange = new TimeChange(openTime);
